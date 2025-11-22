@@ -205,6 +205,9 @@ credentials.json
 !merged_data_nasdaq.csv
 !merged_data_nyse.csv
 !gics_sector_map_nasdaq.csv
+!merged_data_nasdaq_results.csv
+!sample_one_nasdaq_results.csv
+!sample_small_nyse_results.csv
 
 # Financial data
 # allow tracking these for deployment
@@ -216,7 +219,6 @@ maec_transcripts.csv
 *.xls
 
 # Results and logs
-*_results.csv
 *_final_results*.csv
 token_logs/
 timing_logs/
