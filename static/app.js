@@ -3,6 +3,7 @@ const state = {
   page: 1,
   pageSize: 25,
   ticker: "",
+  quarter: "",
   search: "",
 };
 
@@ -12,7 +13,8 @@ let graphNetwork = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   elements.datasetSelect = document.getElementById("dataset-select");
-  elements.tickerInput = document.getElementById("ticker-input");
+  elements.tickerSelect = document.getElementById("ticker-select");
+  elements.quarterSelect = document.getElementById("quarter-select");
   elements.searchInput = document.getElementById("search-input");
   elements.applyFilters = document.getElementById("apply-filters");
   elements.loadGraph = document.getElementById("load-graph");
@@ -30,11 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
   elements.datasetSelect.addEventListener("change", () => {
     state.dataset = elements.datasetSelect.value;
     state.page = 1;
+    fetchOptions();
     loadPage();
   });
 
   elements.applyFilters.addEventListener("click", () => {
-    state.ticker = elements.tickerInput.value.trim();
+    state.ticker = elements.tickerSelect.value;
+    state.quarter = elements.quarterSelect.value;
     state.search = elements.searchInput.value.trim();
     state.page = 1;
     loadPage();
@@ -93,6 +97,7 @@ function populateDatasets(datasets) {
 
   state.dataset = datasets[0];
   elements.datasetSelect.value = state.dataset;
+  fetchOptions();
   loadPage();
 }
 
@@ -104,6 +109,7 @@ function buildQueryString() {
   });
 
   if (state.ticker) params.append("ticker", state.ticker);
+  if (state.quarter) params.append("quarter", state.quarter);
   if (state.search) params.append("search", state.search);
 
   return params.toString();
@@ -191,7 +197,7 @@ function computeTotalPages(total, pageSize) {
 
 async function loadGraph() {
   const params = new URLSearchParams();
-  const tickerVal = elements.tickerInput.value.trim();
+  const tickerVal = elements.tickerSelect.value.trim();
   if (tickerVal) params.append("ticker", tickerVal);
   params.append("limit", "100");
 
@@ -206,6 +212,36 @@ async function loadGraph() {
   } catch (err) {
     alert(err.message || "Could not load graph.");
   }
+}
+
+async function fetchOptions() {
+  if (!state.dataset) return;
+  try {
+    const res = await fetch(`/api/options?dataset=${encodeURIComponent(state.dataset)}`);
+    if (!res.ok) throw new Error("Failed to load options");
+    const data = await res.json();
+    renderOptions(elements.tickerSelect, data.tickers || [], "All tickers");
+    renderOptions(elements.quarterSelect, data.quarters || [], "All quarters");
+    state.ticker = "";
+    state.quarter = "";
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderOptions(selectEl, options, placeholder) {
+  if (!selectEl) return;
+  selectEl.innerHTML = "";
+  const opt = document.createElement("option");
+  opt.value = "";
+  opt.textContent = placeholder;
+  selectEl.appendChild(opt);
+  options.forEach((val) => {
+    const o = document.createElement("option");
+    o.value = val;
+    o.textContent = val;
+    selectEl.appendChild(o);
+  });
 }
 
 function renderGraph(data) {

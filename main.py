@@ -84,6 +84,7 @@ def get_rows(
     page: int = Query(1, ge=1),
     page_size: int = Query(25, ge=1, le=500),
     ticker: Optional[str] = Query(None),
+    quarter: Optional[str] = Query(None, description="Quarter value, if present"),
     search: Optional[str] = Query(None),
 ):
     df = load_dataset(dataset)
@@ -92,6 +93,15 @@ def get_rows(
     if ticker and "ticker" in filtered_df.columns:
         mask = filtered_df["ticker"].astype(str).str.contains(ticker, case=False, na=False)
         filtered_df = filtered_df[mask]
+
+    # Handle quarter column as "quarter" or "q"
+    quarter_col = None
+    if "quarter" in filtered_df.columns:
+        quarter_col = "quarter"
+    elif "q" in filtered_df.columns:
+        quarter_col = "q"
+    if quarter and quarter_col:
+        filtered_df = filtered_df[filtered_df[quarter_col].astype(str) == quarter]
 
     if search:
         search_mask = pd.Series(False, index=filtered_df.index)
@@ -128,6 +138,24 @@ def get_rows(
         "columns": columns,
         "rows": rows,
     }
+
+
+@app.get("/api/options")
+def get_options(
+    dataset: str = Query(..., description="Dataset filename"),
+):
+    df = load_dataset(dataset)
+
+    tickers = []
+    if "ticker" in df.columns:
+        tickers = sorted(df["ticker"].dropna().astype(str).unique().tolist())
+
+    quarter_col = "quarter" if "quarter" in df.columns else ("q" if "q" in df.columns else None)
+    quarters = []
+    if quarter_col:
+        quarters = sorted(df[quarter_col].dropna().astype(str).unique().tolist())
+
+    return {"tickers": tickers, "quarters": quarters}
 
 
 @app.get("/api/graph")
