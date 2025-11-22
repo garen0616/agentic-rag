@@ -68,8 +68,12 @@ function renderBaseline(c) {
 
 function renderTokens(tokens) {
   const el = document.getElementById("token-section");
-  const rows = Object.entries(tokens || {}).map(
-    ([k, v]) => `<li>${k}: ${v}</li>`
-  );
+  const rows = [];
+  if (tokens.total != null) rows.push(`<li>Total: ${tokens.total}</li>`);
+  if (tokens.cost_usd != null) rows.push(`<li>Cost: $${tokens.cost_usd.toFixed(3)}</li>`);
+  Object.entries(tokens || {}).forEach(([k, v]) => {
+    if (k === "total" || k === "cost_usd") return;
+    rows.push(`<li>${k}: ${v}</li>`);
+  });
   el.innerHTML = `<ul>${rows.join("") || "<li>n/a</li>"}</ul>`;
 }

@@ -118,6 +118,7 @@ function renderCalls(rows) {
       row.true_return != null ? `${(row.true_return * 100).toFixed(2)}%` : "",
       row.pred_label || "",
       row.is_correct ? "✔" : "✖",
+      formatTokens(row.token_usage),
     ];
     cols.forEach((val) => {
       const td = document.createElement("td");
@@ -132,4 +133,13 @@ function renderCalls(rows) {
     tr.appendChild(tdLink);
     callElements.tableBody.appendChild(tr);
   });
+}
+
+function formatTokens(tu = {}) {
+  const t = tu.total != null ? tu.total : null;
+  const c = tu.cost_usd != null ? tu.cost_usd : null;
+  if (t == null && c == null) return "";
+  if (t != null && c != null) return `${t} / $${c.toFixed(3)}`;
+  if (t != null) return String(t);
+  return `$${c.toFixed(3)}`;
 }

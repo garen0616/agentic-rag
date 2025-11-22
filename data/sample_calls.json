@@ -28,7 +28,8 @@
       "main_agent": 12000,
       "comparative_agent": 4000,
       "historical_agents": 3000,
-      "baseline": 300
+      "baseline": 300,
+      "cost_usd": 0.134
     }
   },
   {
@@ -60,7 +61,8 @@
       "main_agent": 10000,
       "comparative_agent": 3500,
       "historical_agents": 2500,
-      "baseline": 200
+      "baseline": 200,
+      "cost_usd": 0.115
     }
   },
   {
@@ -92,7 +94,8 @@
       "main_agent": 8000,
       "comparative_agent": 3000,
       "historical_agents": 2000,
-      "baseline": 200
+      "baseline": 200,
+      "cost_usd": 0.095
     }
   }
 ]
