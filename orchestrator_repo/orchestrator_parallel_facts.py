@@ -823,6 +823,8 @@ def process_sector(sector_df: pd.DataFrame, log_path: str = None) -> List[dict]:
                 return rows[["q", "research_note", "actual_return"]].to_dict("records")
 
         for _, row in sector_df.iterrows():
+            # Throttle per row to reduce OpenAI pressure
+            time.sleep(1)
             ticker = row['ticker']
             quarter = row.get("q")
             if pd.isna(quarter):
