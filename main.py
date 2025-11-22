@@ -26,6 +26,7 @@ DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 DATA_CACHE: Dict[str, Tuple[float, pd.DataFrame]] = {}
 CREDENTIALS_FILE = Path(__file__).parent / "orchestrator_repo" / "credentials.json"
+SAMPLE_CALLS_FILE = DATA_DIR / "sample_calls.json"
 
 
 def load_dataset(dataset_name: str) -> pd.DataFrame:
@@ -61,6 +62,15 @@ def get_neo4j_driver():
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to init Neo4j driver: {exc}") from exc
     return driver
+
+
+def load_sample_calls() -> list[dict]:
+    if not SAMPLE_CALLS_FILE.exists():
+        return []
+    try:
+        return json.loads(SAMPLE_CALLS_FILE.read_text())
+    except Exception:
+        return []
 
 
 app.add_middleware(
@@ -156,6 +166,68 @@ def get_options(
         quarters = sorted(df[quarter_col].dropna().astype(str).unique().tolist())
 
     return {"tickers": tickers, "quarters": quarters}
+
+
+@app.get("/api/sample-calls")
+def list_sample_calls(
+    exchange: Optional[str] = Query(None),
+    sector: Optional[str] = Query(None),
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
+    return_min: Optional[float] = Query(None),
+    return_max: Optional[float] = Query(None),
+    pred_label: Optional[str] = Query(None),
+    sort_by: Optional[str] = Query("date", description="date|abs_return|wrong_first"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=200),
+):
+    calls = load_sample_calls()
+
+    def to_date(val):
+        try:
+            return pd.to_datetime(val)
+        except Exception:
+            return None
+
+    filtered = []
+    for c in calls:
+        if exchange and str(c.get("exchange", "")).lower() != exchange.lower():
+            continue
+        if sector and str(c.get("sector", "")).lower() != sector.lower():
+            continue
+        if pred_label and str(c.get("pred_label", "")).lower() != pred_label.lower():
+            continue
+        if return_min is not None and c.get("true_return") is not None and c["true_return"] < return_min:
+            continue
+        if return_max is not None and c.get("true_return") is not None and c["true_return"] > return_max:
+            continue
+        dt = to_date(c.get("date"))
+        if start_date and dt is not None and dt < to_date(start_date):
+            continue
+        if end_date and dt is not None and dt > to_date(end_date):
+            continue
+        filtered.append(c)
+
+    if sort_by == "abs_return":
+        filtered.sort(key=lambda x: abs(x.get("true_return") or 0), reverse=True)
+    elif sort_by == "wrong_first":
+        filtered.sort(key=lambda x: (x.get("is_correct") is True, abs(x.get("true_return") or 0)), reverse=False)
+    else:  # date default
+        filtered.sort(key=lambda x: x.get("date") or "", reverse=True)
+
+    total = len(filtered)
+    start = (page - 1) * page_size
+    end = start + page_size
+    return {"total": total, "page": page, "page_size": page_size, "rows": filtered[start:end]}
+
+
+@app.get("/api/sample-calls/{call_id}")
+def get_sample_call(call_id: str):
+    calls = load_sample_calls()
+    for c in calls:
+        if c.get("id") == call_id:
+            return c
+    raise HTTPException(status_code=404, detail="Call not found")
 
 
 @app.get("/api/graph")

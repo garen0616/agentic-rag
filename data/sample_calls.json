@@ -1,0 +1,98 @@
+[
+  {
+    "id": "call-1",
+    "ticker": "CMTL",
+    "company": "Comtech Telecommunications",
+    "exchange": "NASDAQ",
+    "sector": "Technology",
+    "quarter": "2019-Q3",
+    "date": "2019-06-06",
+    "true_return": -0.055,
+    "pred_label": "Down",
+    "pred_conf": 0.64,
+    "is_correct": true,
+    "baseline_lm_score": 0.12,
+    "finbert_pred": "Neutral",
+    "agent_outputs": {
+      "main_summary": "Net sales $170.4M, adjusted EBITDA $24M; management upbeat on FY19/20 trajectory.",
+      "comparative_points": [
+        "Gross profit % 37.8% vs prior 37.3%",
+        "Bookings $331.2M, backlog $747.1M"
+      ],
+      "historical_notes": [
+        "Prior calls showed rising backlog; sentiment steady positive."
+      ]
+    },
+    "token_usage": {
+      "total": 20327,
+      "main_agent": 12000,
+      "comparative_agent": 4000,
+      "historical_agents": 3000,
+      "baseline": 300
+    }
+  },
+  {
+    "id": "call-2",
+    "ticker": "FOXF",
+    "company": "Fox Factory",
+    "exchange": "NASDAQ",
+    "sector": "Consumer Discretionary",
+    "quarter": "2021-Q2",
+    "date": "2021-08-05",
+    "true_return": 0.0598,
+    "pred_label": "Up",
+    "pred_conf": 0.71,
+    "is_correct": true,
+    "baseline_lm_score": 0.28,
+    "finbert_pred": "Positive",
+    "agent_outputs": {
+      "main_summary": "Revenue up 79% YoY, net income +253%; supply chain risks noted but outlook solid.",
+      "comparative_points": [
+        "EBITDA margin improved vs prior quarter",
+        "Raised FY revenue guide"
+      ],
+      "historical_notes": [
+        "Back-to-back record quarters; past earnings day reactions positive."
+      ]
+    },
+    "token_usage": {
+      "total": 18000,
+      "main_agent": 10000,
+      "comparative_agent": 3500,
+      "historical_agents": 2500,
+      "baseline": 200
+    }
+  },
+  {
+    "id": "call-3",
+    "ticker": "GIII",
+    "company": "G-III Apparel Group",
+    "exchange": "NASDAQ",
+    "sector": "Consumer Discretionary",
+    "quarter": "2020-Q2",
+    "date": "2020-09-03",
+    "true_return": -0.146,
+    "pred_label": "Down",
+    "pred_conf": 0.55,
+    "is_correct": true,
+    "baseline_lm_score": -0.22,
+    "finbert_pred": "Negative",
+    "agent_outputs": {
+      "main_summary": "Sales and earnings declined; guidance cautious given macro and supply chain issues.",
+      "comparative_points": [
+        "Revenue down vs prior year",
+        "Margins compressed by logistics costs"
+      ],
+      "historical_notes": [
+        "Past calls showed volatility; negative post-earnings reactions common."
+      ]
+    },
+    "token_usage": {
+      "total": 15000,
+      "main_agent": 8000,
+      "comparative_agent": 3000,
+      "historical_agents": 2000,
+      "baseline": 200
+    }
+  }
+]

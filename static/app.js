@@ -421,3 +421,33 @@ function renderBaselineDetails(row) {
 
   container.appendChild(list);
 }
+
+async function fetchOptions() {
+  if (!state.dataset) return;
+  try {
+    const res = await fetch(`/api/options?dataset=${encodeURIComponent(state.dataset)}`);
+    if (!res.ok) throw new Error("Failed to load options");
+    const data = await res.json();
+    renderOptions(elements.tickerSelect, data.tickers || [], "All tickers");
+    renderOptions(elements.quarterSelect, data.quarters || [], "All quarters");
+    state.ticker = "";
+    state.quarter = "";
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderOptions(selectEl, options, placeholder) {
+  if (!selectEl) return;
+  selectEl.innerHTML = "";
+  const opt = document.createElement("option");
+  opt.value = "";
+  opt.textContent = placeholder;
+  selectEl.appendChild(opt);
+  options.forEach((val) => {
+    const o = document.createElement("option");
+    o.value = val;
+    o.textContent = val;
+    selectEl.appendChild(o);
+  });
+}
