@@ -25,6 +25,7 @@ app = FastAPI(title="Earnings Call Agentic RAG - Offline Viewer")
 
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+RESULT_DIRS = [DATA_DIR, Path(__file__).parent / "orchestrator_repo"]
 DATA_CACHE: Dict[str, Tuple[float, pd.DataFrame]] = {}
 CREDENTIALS_FILE = Path(__file__).parent / "orchestrator_repo" / "credentials.json"
 SAMPLE_CALLS_FILE = DATA_DIR / "sample_calls.json"
@@ -32,8 +33,13 @@ SAMPLE_CALLS_FILE = DATA_DIR / "sample_calls.json"
 
 def load_dataset(dataset_name: str) -> pd.DataFrame:
     """Load a dataset from disk with simple in-memory caching."""
-    dataset_path = DATA_DIR / dataset_name
-    if not dataset_path.exists():
+    dataset_path = None
+    for base in RESULT_DIRS:
+        candidate = base / dataset_name
+        if candidate.exists():
+            dataset_path = candidate
+            break
+    if dataset_path is None or not dataset_path.exists():
         raise HTTPException(status_code=404, detail="Dataset not found")
 
     mtime = dataset_path.stat().st_mtime
@@ -94,7 +100,12 @@ app.add_middleware(
 
 @app.get("/api/datasets")
 def list_datasets():
-    datasets = sorted([p.name for p in DATA_DIR.glob("*_results.csv") if p.is_file()])
+    files = set()
+    for base in RESULT_DIRS:
+        for p in base.glob("*_results.csv"):
+            if p.is_file():
+                files.add(p.name)
+    datasets = sorted(files)
     return {"datasets": datasets}
 
 
