@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earnings Call Agentic RAG — Offline Results Viewer</title>
+  <link rel="stylesheet" href="https://unpkg.com/vis-network/styles/vis-network.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Earnings Call Agentic RAG — Offline Results Viewer</h1>
+  </header>
+
+  <main>
+    <section class="toolbar">
+      <label for="dataset-select">Dataset</label>
+      <select id="dataset-select"></select>
+
+      <input id="ticker-input" type="text" placeholder="Filter by ticker (if available)">
+      <input id="search-input" type="text" placeholder="Search in all columns">
+      <button id="apply-filters">Apply Filters</button>
+      <button id="load-graph">Load Graph</button>
+    </section>
+
+    <section class="pagination">
+      <button id="prev-page">Prev</button>
+      <span id="page-info">Page 1 of 1</span>
+      <button id="next-page">Next</button>
+    </section>
+
+    <section class="table-wrapper">
+      <table id="results-table">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="graph-panel">
+      <h2>Graph view (Neo4j)</h2>
+      <p class="muted">Uses current ticker input if provided; otherwise shows a small sample.</p>
+      <div id="graph-container"></div>
+    </section>
+
+    <section class="details">
+      <h2>Row details</h2>
+      <div class="detail-grid">
+        <div class="card">
+          <h3>Multi-agent analysis</h3>
+          <div id="agent-details" class="card-body">Click a row to see analysis.</div>
+        </div>
+        <div class="card">
+          <h3>Baseline metrics</h3>
+          <div id="baseline-details" class="card-body">Click a row to see baseline stats.</div>
+        </div>
+      </div>
+      <h3>Raw row JSON</h3>
+      <pre id="row-details">Click a row to see details.</pre>
+    </section>
+  </main>
+</body>
+</html>

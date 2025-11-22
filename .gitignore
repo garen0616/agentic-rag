@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# Local data/results
+data/*
+!data/README.md
+*.log
+
+# Orchestrator clone and credentials (keep local only)
+orchestrator_repo/
+
+# Misc
+.DS_Store
+.idea/
+.vscode/
