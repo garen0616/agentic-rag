@@ -201,12 +201,17 @@ credentials.json
 !requirements.txt
 !package.json
 !config.json
+# allow key datasets
+!merged_data_nasdaq.csv
+!merged_data_nyse.csv
+!gics_sector_map_nasdaq.csv
 
 # Financial data
-financial_statements/
-merged_data_*.csv
+# allow tracking these for deployment
+!financial_statements/
 maec_transcripts.csv
-gics_sector_map_*.csv
+# gics maps allowed via explicit whitelists above
+#gics_sector_map_*.csv
 *.xlsx
 *.xls
 
