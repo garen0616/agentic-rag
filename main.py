@@ -177,6 +177,10 @@ def get_options(
 ):
     df = load_dataset(dataset)
 
+    # Only keep rows without errors if column exists
+    if "error" in df.columns:
+        df = df[df["error"].isna() | (df["error"] == "")]
+
     tickers = []
     if "ticker" in df.columns:
         tickers = sorted(df["ticker"].dropna().astype(str).unique().tolist())
