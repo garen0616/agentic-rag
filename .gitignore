@@ -9,8 +9,12 @@ data/*
 !data/sample_calls.json
 *.log
 
-# Orchestrator clone and credentials (keep local only)
-orchestrator_repo/
+# Orchestrator
+orchestrator_repo/credentials.json
+orchestrator_repo/neo4j.lock
+orchestrator_repo/token_logs/
+orchestrator_repo/timing_logs/
+orchestrator_repo/*.zip
 
 # Misc
 .DS_Store

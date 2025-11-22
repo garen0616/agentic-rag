@@ -8,6 +8,7 @@ Run locally:
 """
 
 import math
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Optional, Tuple
@@ -51,14 +52,23 @@ def load_dataset(dataset_name: str) -> pd.DataFrame:
 
 @lru_cache(maxsize=1)
 def get_neo4j_driver():
-    if not CREDENTIALS_FILE.exists():
-        raise HTTPException(status_code=500, detail="Neo4j credentials file not found")
-    creds = json.loads(CREDENTIALS_FILE.read_text())
+    uri = os.getenv("NEO4J_URI")
+    user = os.getenv("NEO4J_USERNAME")
+    pwd = os.getenv("NEO4J_PASSWORD")
+
+    if not uri or not user or not pwd:
+        if not CREDENTIALS_FILE.exists():
+            raise HTTPException(status_code=500, detail="Neo4j credentials not found (env or credentials.json)")
+        creds = json.loads(CREDENTIALS_FILE.read_text())
+        uri = uri or creds.get("neo4j_uri")
+        user = user or creds.get("neo4j_username")
+        pwd = pwd or creds.get("neo4j_password")
+
+    if not uri or not user or not pwd:
+        raise HTTPException(status_code=500, detail="Neo4j credentials incomplete")
+
     try:
-        driver = GraphDatabase.driver(
-            creds.get("neo4j_uri"),
-            auth=(creds.get("neo4j_username"), creds.get("neo4j_password")),
-        )
+        driver = GraphDatabase.driver(uri, auth=(user, pwd))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to init Neo4j driver: {exc}") from exc
     return driver
