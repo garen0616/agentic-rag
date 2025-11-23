@@ -1,77 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Earnings Call Agentic RAG — Offline Results Viewer</title>
-  <link rel="stylesheet" href="https://unpkg.com/vis-network/styles/vis-network.css">
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-  <script src="app.js" defer></script>
-</head>
-<body>
-  <header>
-    <h1>Earnings Call Agentic RAG — Offline Results Viewer</h1>
-    <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="calls.html">Calls List</a>
-    </nav>
-  </header>
-
-  <main>
-    <section class="toolbar">
-      <label for="dataset-select">Dataset</label>
-      <select id="dataset-select"></select>
-
-      <label for="ticker-select">Ticker</label>
-      <select id="ticker-select">
-        <option value="">All</option>
-      </select>
-
-      <label for="quarter-select">Quarter</label>
-      <select id="quarter-select">
-        <option value="">All</option>
-      </select>
-
-      <input id="search-input" type="text" placeholder="Search in all columns">
-      <button id="apply-filters">Apply Filters</button>
-      <button id="load-graph">Load Graph</button>
-    </section>
-
-    <section class="pagination">
-      <button id="prev-page">Prev</button>
-      <span id="page-info">Page 1 of 1</span>
-      <button id="next-page">Next</button>
-    </section>
-
-    <section class="table-wrapper">
-      <table id="results-table">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </section>
-
-    <section class="graph-panel">
-      <h2>Graph view (Neo4j)</h2>
-      <p class="muted">Uses current ticker input if provided; otherwise shows a small sample.</p>
-      <div id="graph-container"></div>
-    </section>
-
-    <section class="details">
-      <h2>Row details</h2>
-      <div class="detail-grid">
-        <div class="card">
-          <h3>Multi-agent analysis</h3>
-          <div id="agent-details" class="card-body">Click a row to see analysis.</div>
-        </div>
-        <div class="card">
-          <h3>Baseline metrics</h3>
-          <div id="baseline-details" class="card-body">Click a row to see baseline stats.</div>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings Call Agentic RAG — Offline Results Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/vis-network/styles/vis-network.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo-block">
+        <div class="logo">AR</div>
+        <div>
+          <p class="eyebrow">Agentic RAG</p>
+          <h1>Offline Results Viewer</h1>
+          <p class="lead">Browse CSV outputs, filter by ticker/quarter, and inspect graphs without hitting APIs.</p>
         </div>
       </div>
-      <h3>Raw row JSON</h3>
-      <pre id="row-details">Click a row to see details.</pre>
-    </section>
-  </main>
-</body>
+      <nav class="nav-links">
+        <a href="index.html" class="active">Viewer</a>
+        <a href="calls.html">Calls List</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Filters</p>
+            <h2>Select a dataset and refine results</h2>
+          </div>
+          <div class="pagination">
+            <button id="prev-page" class="ghost">Prev</button>
+            <span id="page-info">Page 1 of 1</span>
+            <button id="next-page" class="ghost">Next</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="field">
+            <label for="dataset-select">Dataset</label>
+            <select id="dataset-select"></select>
+          </div>
+          <div class="field">
+            <label for="ticker-select">Ticker</label>
+            <select id="ticker-select">
+              <option value="">All</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="quarter-select">Quarter</label>
+            <select id="quarter-select">
+              <option value="">All</option>
+            </select>
+          </div>
+          <div class="field stretch">
+            <label for="search-input">Search</label>
+            <input id="search-input" type="text" placeholder="Search in all columns">
+          </div>
+          <div class="actions">
+            <button id="apply-filters" class="primary">Apply Filters</button>
+            <button id="load-graph" class="ghost">Load Graph</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Table</p>
+            <h2>Click any row to see details</h2>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table id="results-table">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Row details</p>
+            <h2>Agent outputs vs baseline</h2>
+          </div>
+        </div>
+        <div class="detail-grid">
+          <div class="card">
+            <h3>Multi-agent analysis</h3>
+            <div id="agent-details" class="card-body">Click a row to see analysis.</div>
+          </div>
+          <div class="card">
+            <h3>Baseline metrics</h3>
+            <div id="baseline-details" class="card-body">Click a row to see baseline stats.</div>
+          </div>
+        </div>
+
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Graph (Neo4j)</p>
+            <h2>Relationships & facts</h2>
+            <p class="muted">Uses the current ticker if set; otherwise a small sample.</p>
+          </div>
+        </div>
+        <div id="graph-container"></div>
+
+        <h3 class="muted">Raw row JSON</h3>
+        <pre id="row-details">Click a row to see details.</pre>
+      </section>
+    </main>
+  </body>
 </html>
