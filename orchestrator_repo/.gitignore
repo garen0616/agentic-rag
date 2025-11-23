@@ -209,6 +209,7 @@ credentials.json
 !sample_one_nasdaq_results.csv
 !sample_small_nyse_results.csv
 !sample_nasdaq_batch20_results.csv
+!sample_maec_20_results.csv
 
 # Financial data
 # allow tracking these for deployment
