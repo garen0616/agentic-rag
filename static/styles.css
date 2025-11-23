@@ -256,6 +256,10 @@ tbody tr:hover {
   background: #f8fafc;
 }
 
+.card.hidden {
+  display: none;
+}
+
 .card h3 {
   margin: 0 0 6px;
 }

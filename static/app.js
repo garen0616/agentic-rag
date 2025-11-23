@@ -427,9 +427,11 @@ function renderBaselineDetails(row) {
       lastColumns.includes("polarity"));
 
   if (!hasBaseline) {
-    container.textContent = "No baseline sentiment metrics in this dataset.";
+    container.textContent = "";
+    container.closest(".card")?.classList.add("hidden");
     return;
   }
+  container.closest(".card")?.classList.remove("hidden");
 
   const sentiment = row.sentiment;
   const polarity = row.polarity;
