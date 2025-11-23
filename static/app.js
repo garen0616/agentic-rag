@@ -47,6 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
   elements.loadGraph.addEventListener("click", () => {
     loadGraph();
   });
+  const loadGraphSecondary = document.getElementById("load-graph-secondary");
+  if (loadGraphSecondary) {
+    loadGraphSecondary.addEventListener("click", () => {
+      loadGraph();
+    });
+  }
 
   elements.prevPage.addEventListener("click", () => {
     if (state.page > 1) {
@@ -169,8 +175,17 @@ function renderTable(columns, rows) {
     const tr = document.createElement("tr");
     columns.forEach((col) => {
       const td = document.createElement("td");
-      const value = row[col];
-      td.textContent = value === null || value === undefined ? "" : String(value);
+      let value = row[col];
+      const text = value === null || value === undefined ? "" : String(value);
+
+      // Compact long JSON/text columns in the grid
+      if (["parsed_and_analyzed_facts", "research_note"].includes(col) && text.length > 80) {
+        const shortText = text.slice(0, 80) + "…";
+        td.textContent = shortText;
+        td.title = "Click row for full details";
+      } else {
+        td.textContent = text;
+      }
       tr.appendChild(td);
     });
     tr.addEventListener("click", () => showRowDetails(row));
@@ -343,23 +358,49 @@ function renderAgentDetails(row) {
     groups[t].push(item);
   });
 
-  Object.entries(groups).forEach(([type, list]) => {
-    const section = document.createElement("div");
-    const title = document.createElement("h4");
-    title.textContent = type;
-    section.appendChild(title);
+  Object.entries(groups).forEach(([type, list], idx) => {
+    const detailsEl = document.createElement("details");
+    if (idx === 0) detailsEl.open = true;
+    const summary = document.createElement("summary");
+    summary.textContent = `${type} (${list.length})`;
+    detailsEl.appendChild(summary);
 
-    const ul = document.createElement("ul");
+    const wrapper = document.createElement("div");
+    wrapper.className = "fact-list";
+
     list.forEach((item) => {
-      const li = document.createElement("li");
       const metric = item.metric || "Metric";
       const value = item.value || "";
       const reason = item.reason || "";
-      li.textContent = `${metric}: ${value}${reason ? " — " + reason : ""}`;
-      ul.appendChild(li);
+
+      const fact = document.createElement("div");
+      fact.className = "fact-item";
+
+      const header = document.createElement("div");
+      header.className = "fact-header";
+      const metricEl = document.createElement("strong");
+      metricEl.textContent = metric;
+      const valueEl = document.createElement("span");
+      valueEl.className = "fact-value";
+      valueEl.textContent = value;
+      header.appendChild(metricEl);
+      if (value) {
+        header.appendChild(document.createTextNode(" · "));
+        header.appendChild(valueEl);
+      }
+
+      fact.appendChild(header);
+      if (reason) {
+        const reasonEl = document.createElement("div");
+        reasonEl.className = "fact-reason";
+        reasonEl.textContent = reason;
+        fact.appendChild(reasonEl);
+      }
+      wrapper.appendChild(fact);
     });
-    section.appendChild(ul);
-    container.appendChild(section);
+
+    detailsEl.appendChild(wrapper);
+    container.appendChild(detailsEl);
   });
 
   if (summaryText) {
@@ -386,9 +427,11 @@ function renderBaselineDetails(row) {
       lastColumns.includes("polarity"));
 
   if (!hasBaseline) {
-    container.textContent = "No baseline sentiment metrics in this dataset.";
+    container.textContent = "";
+    container.closest(".card")?.classList.add("hidden");
     return;
   }
+  container.closest(".card")?.classList.remove("hidden");
 
   const sentiment = row.sentiment;
   const polarity = row.polarity;
