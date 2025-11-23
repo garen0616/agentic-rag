@@ -169,8 +169,17 @@ function renderTable(columns, rows) {
     const tr = document.createElement("tr");
     columns.forEach((col) => {
       const td = document.createElement("td");
-      const value = row[col];
-      td.textContent = value === null || value === undefined ? "" : String(value);
+      let value = row[col];
+      const text = value === null || value === undefined ? "" : String(value);
+
+      // Compact long JSON/text columns in the grid
+      if (["parsed_and_analyzed_facts", "research_note"].includes(col) && text.length > 80) {
+        const shortText = text.slice(0, 80) + "…";
+        td.textContent = shortText;
+        td.title = "Click row for full details";
+      } else {
+        td.textContent = text;
+      }
       tr.appendChild(td);
     });
     tr.addEventListener("click", () => showRowDetails(row));
