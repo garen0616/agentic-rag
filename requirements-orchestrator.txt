@@ -1,0 +1,16 @@
+# Base runtime deps (if running orchestrator locally)
+fastapi
+uvicorn[standard]
+pandas
+neo4j
+
+# Orchestrator + LLM tooling (heavy; not needed on Zeabur viewer)
+openai
+langchain
+langchain-openai
+numpy
+scikit-learn
+tqdm
+transformers
+torch
+accelerate

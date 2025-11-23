@@ -2,12 +2,3 @@ fastapi
 uvicorn[standard]
 pandas
 neo4j
-openai
-langchain
-langchain-openai
-numpy
-scikit-learn
-tqdm
-transformers
-torch
-accelerate
