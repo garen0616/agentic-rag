@@ -47,6 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
   elements.loadGraph.addEventListener("click", () => {
     loadGraph();
   });
+  const loadGraphSecondary = document.getElementById("load-graph-secondary");
+  if (loadGraphSecondary) {
+    loadGraphSecondary.addEventListener("click", () => {
+      loadGraph();
+    });
+  }
 
   elements.prevPage.addEventListener("click", () => {
     if (state.page > 1) {
