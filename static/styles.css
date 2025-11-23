@@ -266,6 +266,50 @@ tbody tr:hover {
   color: #334155;
 }
 
+.fact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.fact-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #fff;
+}
+
+.fact-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+  color: #0f172a;
+}
+
+.fact-value {
+  color: #0ba5ec;
+  font-weight: 600;
+}
+
+.fact-reason {
+  margin-top: 4px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #0f172a;
+  margin-top: 6px;
+}
+
+details[open] summary {
+  color: #0a94d4;
+}
+
 pre {
   background: #0f172a;
   color: #e2e8f0;
