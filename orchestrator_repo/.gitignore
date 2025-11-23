@@ -208,6 +208,7 @@ credentials.json
 !merged_data_nasdaq_results.csv
 !sample_one_nasdaq_results.csv
 !sample_small_nyse_results.csv
+!sample_nasdaq_batch20_results.csv
 
 # Financial data
 # allow tracking these for deployment
